@@ -1,0 +1,256 @@
+@import url('https://fonts.googleapis.com/css?family=Gaegu:400,700');
+
+/* BEM Methodology -- Block -- Element -- Modifier */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  box-sizing: border-box;
+  font-family: 'Gaegu', cursive;
+}
+
+.App{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100vh;
+  width: 100vw;
+}
+
+/***********************/
+/********HEADER********/
+/*********************/
+
+.Title {
+  font-size: 48px;
+  font-weight: 800;
+  user-select: none;
+}
+
+.SaveSongInput {
+  position: relative;
+}
+.SaveSongInput-input {
+  height: 50px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #A09595;
+  padding-left: 10px;
+  font-size: 20px;
+}
+.SaveSongInput-button {
+  position: absolute;
+  width: 86px;
+  height: 36px;
+  right: 23px;
+  bottom: 7px;
+  border: none;
+  background-color: #616161;
+  border-radius: 8px;
+  text-align: center;
+  color: white;
+  font-size: 20px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.Profile-MainMenu {
+  width: 39px;
+  height: 39px;
+  background-color: #616161;
+  border-radius: 50%;
+  text-align: center;
+  color: white;
+  box-shadow: 1px 2px 7px #000000;
+  cursor: pointer;
+}
+
+/***********************/
+/*********PADS*********/
+/*********************/
+
+.Pad {
+  width: 106px;
+  height: 106px;
+  border-radius: 50%;
+  border: 3px solid #000000;
+  background-color: #EEEEEE;
+  box-shadow: 1px 2px 7px #000000;
+}
+
+/***********************/
+/*********Info*********/
+/*********************/
+
+.InfoTutorialButton {
+  color: #000000;
+  border: 2px solid #979797;
+  background-color: transparent;
+  width: 43px;
+  height: 24px;
+  box-shadow: 2px 2px 4px 0 #000000;
+  -webkit-transform: skew(-20deg);
+  transform: skew(-20deg);
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  cursor: pointer;
+}
+.thatSpan {
+  -webkit-transform: skew(20deg);
+  transform: skew(20deg);
+}
+
+.MIDIConnectButton {
+  height: 24px;
+}
+
+/***********************/
+/*****StepSequencer****/
+/*******GENERAL*******/
+
+.StepSequencer {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.StepSeq-ControlBar{
+  width: 100vw;
+  height: 45px;
+  background-color: #D8D8D8;
+  border-top: 5px solid #979797;
+  border-bottom: 2px solid #979797;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.StepSeq-ControlBar-SettingsWindow {
+  width: 190px;
+  background-color: #D8D8D8;
+  border: 5px solid #979797;
+  border-bottom: 1px;
+  height: 140px;
+  position: absolute;
+  bottom: 41%;
+  right: 350px;
+}
+
+.StepSeq-ControlBar-SettingsWindow p{
+  margin-bottom: 0px;
+}
+
+.StepSeq-ControlBar-Button {
+  width: 27px;
+  height: 27px;
+  border-radius: 8px;
+  border: 2px solid #000000;
+  background-color: #EEEEEE;
+  margin-left: 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.StepSeq-ControlBar-Button.on{
+  box-shadow: 0px 0px 16px 2px rgb(223, 135, 135);
+}
+
+.StepSeq-ControlBar-Button--settings {
+  width:160px;
+  font-size: 20px;
+  margin-left: 160px;
+  user-select: none;
+}
+.StepSeq-ControlBar-RecordSymbol{
+  width:15px;
+  height: 15px;
+  border-radius: 50%;
+  background: rgb(223, 135, 135);
+  border: 2px solid #000000;
+}
+
+.StepSeq-Main {
+  width: 100vw;
+  height: 100%;
+  background-color: #EEEEEE;
+  flex: 1;
+  overflow: scroll;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+/***********************/
+/*****StepSequencer****/
+/*********************/
+
+.StepSeq-Main--tracks {
+  height: 100%;
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid black;
+}
+
+.StepSeq-Main--track {
+  height: 25%;
+  border-bottom: 2px solid black;
+  text-transform: uppercase;
+}
+.StepSeq-Main--track:last-of-type {
+  border-bottom: 0px;
+}
+
+.StepSeq-Main--column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.StepSeq-Main--pad {
+  width: 80px;
+  height: 25%;
+  border: 2px solid black;
+  background-color: white;
+}
+
+.StepSeq-Main--pad.on {
+  background-color: #afafaf;
+}
+.StepSeq-Main--column.on {
+  z-index: 100;
+  box-shadow: 0px 0px 17px 8px rgb(223, 135, 135);
+}
+
+/****************/
+/****Tutorial***/
+/**************/
+
+.Tutorial {
+  position: fixed;
+  padding: 20px;
+  width: 400px;
+  height: 400px;
+  overflow: scroll;
+  top: 12%;
+  left: 40%;
+  background-color: #D8D8D8;
+  color: red;
+  border: 3px solid #000000;
+  box-shadow: 0px 0px 300px 130px rgba(0,0,0,0.75);
+}
+.Tutorial-close {
+  position: absolute;
+  right: 15px;
+  top: -5px;
+  color: black;
+  font-size: 30px;
+  cursor: pointer;
+}
