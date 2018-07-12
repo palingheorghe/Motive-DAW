@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
-
+// node library for detecting the device the app is used on
+import {
+  BrowserView,
+  MobileView,
+  isBrowser,
+  isMobile
+} from "react-device-detect";
 import Header from './components/Header';
 import Tutorial from './components/Tutorial';
 import Pads from './components/Pads';
 import Info from './components/Info';
 import StepSequencer from './components/StepSequencer';
 
-import {connectMIDI, MIDISignal} from './scripts/MIDIConnect';
+import { connectMIDI, MIDISignal } from './scripts/MIDIConnect';
 
 console.log(MIDISignal);
 
@@ -97,7 +103,46 @@ class App extends Component {
   render() {
 
     const { bpm, noteType, bars, drumKit, playing, tutorialOpen, MIDIName } = this.state;
+    if (isMobile) {
+      return (
+        <MobileView>
+          <p className="Title">Motive</p>
+          <div className="MobileApp">
+            <Pads MIDISignal={MIDISignal} />
+          </div>
+          <p className="Footer">App created with LOVE by <a href="https://www.instagram.com/aling.js/">me</a>.</p>
+        </MobileView>
+      );
+    } else if (isBrowser) {
+      return (
+        <BrowserView>
+          <div className="App">
+            <Header />
+            {tutorialOpen ? <Tutorial openTutorial={this.openTutorial} /> : ""}
+            <Pads MIDISignal={MIDISignal} />
+            <Info
+              tutorial={this.openTutorial}
+              MIDIName={MIDIName}
+              MIDIConnect={this.connectMIDI}
+            />
+            <StepSequencer
+              bpm={bpm}
+              noteType={noteType}
+              bars={bars}
+              drumKit={drumKit}
+              changeDrumKit={this.stepSequencerDrumKitChange}
+              playButton={this.stepSequencerPlayStop}
+              playing={playing}
+              changeBPM={this.changeBPM}
+              changeBars={this.changeBars}
+              changeNoteType={this.changeNoteType}
+            />
+          </div>
+        </BrowserView>
+      );
+    } else {
 
+    }
     return (
       <div className="App">
         <Header />

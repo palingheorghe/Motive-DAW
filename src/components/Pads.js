@@ -9,7 +9,7 @@ export default class Pads extends Component {
   
   render() {
 
-    const { MIDISignal } = this.props;
+    // const { MIDISignal } = this.props;
 
     return (
       <div className="Pads container">
