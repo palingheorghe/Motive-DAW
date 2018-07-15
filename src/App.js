@@ -12,9 +12,11 @@ import Pads from './components/Pads';
 import Info from './components/Info';
 import StepSequencer from './components/StepSequencer';
 
-import { connectMIDI, MIDISignal } from './scripts/MIDIConnect';
+import Tone from 'tone';
 
-console.log(MIDISignal);
+import { play } from './scripts/MIDIConnect';
+
+// console.log(MIDISignal);
 
 /*
   Noul plan este:
@@ -47,6 +49,14 @@ class App extends Component {
     this.changeBPM = this.changeBPM.bind(this);
     this.changeNoteType = this.changeNoteType.bind(this);
     this.openTutorial = this.openTutorial.bind(this);
+    this.setMIDIInput = this.setMIDIInput.bind(this);
+    this.onMIDISuccess = this.onMIDISucces.bind(this);
+    this.gotMIDImessage = this.gotMIDImessage.bind(this);
+    this.onMIDIFailure = function onMIDIFailure() {
+      console.warn("Not recognising MIDI controller");
+    }
+
+    Tone.Transport.start();
   }
 
   componentDidMount() {
@@ -54,11 +64,52 @@ class App extends Component {
       if (e.keyCode === 32) {
         this.stepSequencerPlayStop();
       }
-    })
+    });
+    if (navigator.requestMIDIAccess) {
+      navigator.requestMIDIAccess({
+        sysex: false
+      }).then(this.onMIDISuccess, this.onMIDIFailure);
+    } else console.warn("No MIDI support in your browser");
   }
 
   connectMIDI() {
-    connectMIDI();
+    // connectMIDI();
+    if (navigator.requestMIDIAccess) {
+      navigator.requestMIDIAccess({
+        sysex: false
+      }).then(this.onMIDISuccess, this.onMIDIFailure);
+    } else console.warn("No MIDI support in your browser");
+  }
+
+  gotMIDImessage(messageData) {
+    this.MIDISignal = messageData.data;
+
+    if(this.MIDISignal[0] === 153 && this.MIDISignal[1] >= 36 && this.MIDISignal[1] <= 51 ){
+      play(this.MIDISignal[1]);
+    }
+
+    console.log(this.MIDISignal)
+  }
+
+
+  onMIDISucces(midiData) {
+    console.log(midiData);
+    let gotMIDI = this.gotMIDImessage;
+    let midi = midiData; //all our MIDI Data
+    let allInputs = midi.inputs.values(); //inputurile primite de la controller
+    for (let input = allInputs.next(); input && !input.done; input = allInputs.next()) {
+      //loop over all available inputs and listen for any MIDI input
+      input.value.onmidimessage = gotMIDI;
+      //when a MIDI value is received call the onMIDIMessage function
+    }
+  }
+
+  setMIDIInput(inputMIDIName) {
+    if(this.state.MIDIName !== inputMIDIName) {
+      this.setState({
+        MIDIName: inputMIDIName
+      })
+    }
   }
 
   stepSequencerPlayStop() {
@@ -108,7 +159,7 @@ class App extends Component {
         <MobileView>
           <p className="Title">Motive</p>
           <div className="MobileApp">
-            <Pads MIDISignal={MIDISignal} />
+            <Pads MIDISignal={this.MIDISignal} />
           </div>
           <p className="Footer">App created with LOVE by <a href="https://www.instagram.com/aling.js/">me</a>.</p>
         </MobileView>
@@ -119,7 +170,7 @@ class App extends Component {
           <div className="App">
             <Header />
             {tutorialOpen ? <Tutorial openTutorial={this.openTutorial} /> : ""}
-            <Pads MIDISignal={MIDISignal} />
+            <Pads MIDISignal={this.MIDISignal} />
             <Info
               tutorial={this.openTutorial}
               MIDIName={MIDIName}
@@ -140,33 +191,7 @@ class App extends Component {
           </div>
         </BrowserView>
       );
-    } else {
-
     }
-    return (
-      <div className="App">
-        <Header />
-        {tutorialOpen ? <Tutorial openTutorial={this.openTutorial} /> : ""}
-        <Pads MIDISignal={MIDISignal} />
-        <Info
-          tutorial={this.openTutorial}
-          MIDIName={MIDIName}
-          MIDIConnect={this.connectMIDI}
-        />
-        <StepSequencer
-          bpm={bpm}
-          noteType={noteType}
-          bars={bars}
-          drumKit={drumKit}
-          changeDrumKit={this.stepSequencerDrumKitChange}
-          playButton={this.stepSequencerPlayStop}
-          playing={playing}
-          changeBPM={this.changeBPM}
-          changeBars={this.changeBars}
-          changeNoteType={this.changeNoteType}
-        />
-      </div>
-    );
   }
 }
 
