@@ -1,43 +1,29 @@
 import React, { Component } from 'react';
-import Pad from './Pad';
+import PropTypes from 'prop-types';
+
 
 export default class Pads extends Component {
-  
-  componentWillReceiveProps() {
-    console.log('uite aici nebunie', this.props.MIDISignal)
-  }
-  
+
   render() {
-
-    // const { MIDISignal } = this.props;
-
+     const { drumPadPattern } = this.props;
     return (
       <div className="Pads container">
-        <div className="row justify-content-center mt-1 mt-sm-2">
-          <Pad />
-          <Pad />
-          <Pad />
-          <Pad />
-        </div>
-        <div className="row justify-content-center mt-1 mt-sm-1">
-          <Pad />
-          <Pad />
-          <Pad />
-          <Pad />
-        </div>
-        <div className="row justify-content-center mt-1 mt-sm-1">
-          <Pad />
-          <Pad />
-          <Pad />
-          <Pad />
-        </div>
-        <div className="row justify-content-center mt-1 mt-sm-1">
-          <Pad />
-          <Pad />
-          <Pad />
-          <Pad />
-        </div>
+        {
+          drumPadPattern.map( (group, groupIndex) => {
+            return (
+              <div className={`row justify-content-center mt-1 mt-sm-2`} key={`groupPadColumn-${groupIndex}`}>
+                {
+                  group.map( (pad, padIndex) => <div className={`Pad ${pad === 1 ? 'PadActive ' : ''}mx-1`} key={`Pad-${padIndex}`}/>)
+                }
+              </div>
+            )
+          })
+        }
       </div>
     );
   }
+}
+
+Pads.propTypes = {
+  drumPadPattern: PropTypes.arrayOf(PropTypes.array).isRequired,
 }

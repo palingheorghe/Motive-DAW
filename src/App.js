@@ -36,12 +36,16 @@ class App extends Component {
       bpm: 120,
       noteType: 4,
       bars: 4,
-      MIDIConnected: false,
       MIDIName: 'NO INPUT',
       drumKit: 'emotional_sounds',
-      padKit: 'emotional_sounds',
       keyboardKit: '',
-      nameOfTheSong: ''
+      nameOfTheSong: '',
+      drumPadPattern: [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ]
     }
     this.stepSequencerPlayStop = this.stepSequencerPlayStop.bind(this);
     this.stepSequencerDrumKitChange = this.stepSequencerDrumKitChange.bind(this);
@@ -55,7 +59,15 @@ class App extends Component {
     this.onMIDIFailure = function onMIDIFailure() {
       console.warn("Not recognising MIDI controller");
     }
+    this.connectMIDI = this.connectMIDI.bind(this);
 
+    this.padNumbers = [
+      48, 49, 50, 51,
+      44, 45, 46, 47,
+      40, 41, 42, 43,
+      36, 37, 38, 39
+    ]
+    this.padPressed = this.padPressed.bind(this);
     Tone.Transport.start();
   }
 
@@ -65,11 +77,24 @@ class App extends Component {
         this.stepSequencerPlayStop();
       }
     });
-    if (navigator.requestMIDIAccess) {
-      navigator.requestMIDIAccess({
-        sysex: false
-      }).then(this.onMIDISuccess, this.onMIDIFailure);
-    } else console.warn("No MIDI support in your browser");
+
+  }
+
+  padPressed(midiNote, onOff) {
+    let indexPadNumbers = this.padNumbers.indexOf(midiNote);
+    const { drumPadPattern } = this.state;
+    let newMatrix;
+    let columnIndex = ~~(indexPadNumbers / 4);
+    let row = indexPadNumbers - (columnIndex * 4);
+    console.log("Coloana si pad-ul: ", columnIndex, row);
+    newMatrix = drumPadPattern.slice(0);
+    newMatrix[columnIndex][row] = onOff === 153 ? 1 : 0;
+  
+      this.setState({
+        drumPadPattern: newMatrix
+      })
+
+
   }
 
   connectMIDI() {
@@ -84,9 +109,10 @@ class App extends Component {
   gotMIDImessage(messageData) {
     this.MIDISignal = messageData.data;
 
-    if(this.MIDISignal[0] === 153 && this.MIDISignal[1] >= 36 && this.MIDISignal[1] <= 51 ){
+    if (this.MIDISignal[0] === 153 && this.MIDISignal[1] >= 36 && this.MIDISignal[1] <= 51) {
       play(this.MIDISignal[1]);
     }
+    this.padPressed(this.MIDISignal[1], this.MIDISignal[0]);
 
     console.log(this.MIDISignal)
   }
@@ -94,8 +120,10 @@ class App extends Component {
 
   onMIDISucces(midiData) {
     console.log(midiData);
-    let gotMIDI = this.gotMIDImessage;
     let midi = midiData; //all our MIDI Data
+    this.setMIDIInput(midi.inputs.entries().next().value[1].name);
+
+    let gotMIDI = this.gotMIDImessage; // functia care zice ce facem cu datele
     let allInputs = midi.inputs.values(); //inputurile primite de la controller
     for (let input = allInputs.next(); input && !input.done; input = allInputs.next()) {
       //loop over all available inputs and listen for any MIDI input
@@ -105,7 +133,7 @@ class App extends Component {
   }
 
   setMIDIInput(inputMIDIName) {
-    if(this.state.MIDIName !== inputMIDIName) {
+    if (this.state.MIDIName !== inputMIDIName) {
       this.setState({
         MIDIName: inputMIDIName
       })
@@ -153,7 +181,7 @@ class App extends Component {
 
   render() {
 
-    const { bpm, noteType, bars, drumKit, playing, tutorialOpen, MIDIName } = this.state;
+    const { bpm, noteType, bars, drumKit, playing, tutorialOpen, MIDIName, drumPadPattern } = this.state;
     if (isMobile) {
       return (
         <MobileView>
@@ -170,7 +198,7 @@ class App extends Component {
           <div className="App">
             <Header />
             {tutorialOpen ? <Tutorial openTutorial={this.openTutorial} /> : ""}
-            <Pads MIDISignal={this.MIDISignal} />
+            <Pads drumPadPattern={drumPadPattern} />
             <Info
               tutorial={this.openTutorial}
               MIDIName={MIDIName}

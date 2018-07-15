@@ -150,7 +150,7 @@ class PlaylistMain extends Component {
               <div className={`StepSeq-Main--column ${column === groupIndex ? 'on': ''}`} key={`groupColumn-${groupIndex}`}>
                 {
                   group.map( (pad, padIndex) => 
-                    <div className={`StepSeq-Main--pad ${pad === 1 ? 'on' : ''}`} key={`Pad-${padIndex}`} onClick={() => this.togglePad(groupIndex, padIndex)}/>
+                    <div className={`StepSeq-Main--pad ${pad === 1 ? 'on' : ''}`} key={`StepSeqSquare-${padIndex}`} onClick={() => this.togglePad(groupIndex, padIndex)}/>
                    )
                 }
               </div>
