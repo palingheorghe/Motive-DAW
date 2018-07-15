@@ -68,6 +68,7 @@ class App extends Component {
       36, 37, 38, 39
     ]
     this.padPressed = this.padPressed.bind(this);
+    this.padClicked = this.padClicked.bind(this);
     Tone.Transport.start();
   }
 
@@ -89,12 +90,26 @@ class App extends Component {
     console.log("Coloana si pad-ul: ", columnIndex, row);
     newMatrix = drumPadPattern.slice(0);
     newMatrix[columnIndex][row] = onOff === 153 ? 1 : 0;
-  
+
       this.setState({
         drumPadPattern: newMatrix
       })
 
+  }
 
+  padClicked(column, row, onOff) {
+    const { drumPadPattern } = this.state;
+    let newMatrix;
+    let indexPadNumbers = row + (column * 4);
+    if(onOff === 1) {
+      play(this.padNumbers[indexPadNumbers]);
+    }
+    newMatrix = drumPadPattern.slice(0);
+    newMatrix[column][row] = onOff === 1 ? 1 : 0;
+
+    this.setState({
+      drumPadPattern: newMatrix
+    })
   }
 
   connectMIDI() {
@@ -187,7 +202,7 @@ class App extends Component {
         <MobileView>
           <p className="Title">Motive</p>
           <div className="MobileApp">
-            <Pads MIDISignal={this.MIDISignal} />
+            <Pads drumPadPattern={drumPadPattern} padClicked={this.padClicked}/>
           </div>
           <p className="Footer">App created with LOVE by <a href="https://www.instagram.com/aling.js/">me</a>.</p>
         </MobileView>
@@ -198,7 +213,7 @@ class App extends Component {
           <div className="App">
             <Header />
             {tutorialOpen ? <Tutorial openTutorial={this.openTutorial} /> : ""}
-            <Pads drumPadPattern={drumPadPattern} />
+            <Pads drumPadPattern={drumPadPattern} padClicked={this.padClicked}/>
             <Info
               tutorial={this.openTutorial}
               MIDIName={MIDIName}
