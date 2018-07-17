@@ -63,8 +63,6 @@ class PlaylistMain extends Component {
 
     Tone.Transport.start();
 
-    // NE MAI GANDIM CUM SCHIMBAM PACK-URILE
-
     Tone.Transport.bpm.value = this.props.bpm;
 
     this.createMatrix = this.createMatrix.bind(this);
@@ -110,33 +108,7 @@ class PlaylistMain extends Component {
     }
   }
   componentWillReceiveProps(props) {
-    this.state.loop.stop();
-   Tone.Transport.stop();
-    this.setState({
-      loop: new Tone.Sequence(
-        (time, col) => {
-          console.log('Step Sequencer started playing a loop');
-          let column = this.state.matrix[col];
-          this.setState({
-            column: col //culoare pe step sequencer
-          });
-          for(let i = 0; i< 4; i++){
-            if(column[i] === 1) 
-              this.state.keys.get(this.noteNames[i]).start(time, 0, "32n", 0, 0.4);
-          }
-        }, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], `${this.props.noteType}n`
-      )
-    })
-    this.setState({
-      keys: new Tone.Players({
-        kick: require(`../sounds/drum kits/${this.props.drumKit}/Kick.wav`),
-        snare: require(`../sounds/drum kits/${this.props.drumKit}/Snare.wav`),
-        hihat: require(`../sounds/drum kits/${this.props.drumKit}/Hat.wav`),
-        boom: require(`../sounds/drum kits/${this.props.drumKit}/Tambourine.wav`),
-      }).toMaster()
-    })
     Tone.Transport.bpm.value = props.bpm;
-    Tone.Transport.start();
   }
 
   render() {
